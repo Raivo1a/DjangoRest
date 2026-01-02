@@ -24,7 +24,7 @@ class Lesson(models.Model):
     image = models.ImageField(upload_to="course/photo", blank=True, null=True, help_text="Загрузите фото")
     link = models.URLField(blank=True, null=True, verbose_name="Ссылка на видео", help_text="Вставьте ссылку на видео")
     course = models.ForeignKey(
-        Course, on_delete=models.SET_NULL, verbose_name="Курс", help_text="Выберите курс", blank=True, null=True
+        Course, on_delete=models.SET_NULL, related_name='lessons', verbose_name="Курс", help_text="Выберите курс", blank=True, null=True
     )
 
     class Meta:
