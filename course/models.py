@@ -8,8 +8,15 @@ class Course(models.Model):
     )
     image = models.ImageField(upload_to="products/photo", blank=True, null=True, help_text="Загрузите фото")
     owner = models.ForeignKey(
-        "users.User", on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Владелец", help_text="Укажите владельца"
+        "users.User",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="Владелец",
+        help_text="Укажите владельца",
     )
+    price = models.PositiveIntegerField(default=0, blank=True, null=True, verbose_name="Цена курса")
+    stripe_product_id = models.CharField(max_length=100, blank=True, null=True, verbose_name="Id курса в Stripe")
 
     class Meta:
         verbose_name = "Курс"
@@ -36,8 +43,15 @@ class Lesson(models.Model):
         null=True,
     )
     owner = models.ForeignKey(
-        "users.User", on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Владелец", help_text="Укажите владельца"
+        "users.User",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="Владелец",
+        help_text="Укажите владельца",
     )
+    price = models.PositiveIntegerField(default=0, blank=True, null=True, verbose_name="Цена урока")
+    stripe_product_id = models.CharField(max_length=100, blank=True, null=True, verbose_name="Id урока в Stripe")
 
     class Meta:
         verbose_name = "Урок"
