@@ -15,29 +15,17 @@ class SubscriptionTestCase(APITestCase):
 
     def test_subscribe(self):
         url = reverse("users:manage_subscription")
-        data = {
-            "course_id": self.course.pk
-        }
+        data = {"course_id": self.course.pk}
         response = self.client.post(url, data)
-        self.assertEqual(
-            response.status_code, status.HTTP_200_OK
-        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get("message"), "Подписка добавлена")
 
     def test_unsubscribe(self):
         Subscription.objects.create(user=self.user, course=self.course)
         url = reverse("users:manage_subscription")
-        data = {
-            "course_id": self.course.pk
-        }
-        self.assertTrue(
-            Subscription.objects.filter(user=self.user, course=self.course).exists()
-        )
+        data = {"course_id": self.course.pk}
+        self.assertTrue(Subscription.objects.filter(user=self.user, course=self.course).exists())
         response = self.client.post(url, data)
-        self.assertFalse(
-            Subscription.objects.filter(user=self.user, course=self.course).exists()
-        )
-        self.assertEqual(
-            response.status_code, status.HTTP_200_OK
-        )
+        self.assertFalse(Subscription.objects.filter(user=self.user, course=self.course).exists())
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get("message"), "Подписка удалена")
