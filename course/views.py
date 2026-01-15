@@ -1,3 +1,4 @@
+from rest_framework.decorators import action
 from rest_framework.generics import CreateAPIView, DestroyAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
@@ -5,6 +6,7 @@ from rest_framework.viewsets import ModelViewSet
 from course.models import Course, Lesson
 from course.paginations import CustomPagination
 from course.serializers import CourseDetailSerializer, CourseSerializer, LessonSerializer
+from course.tasks import send_update_notification
 from users.permissions import IsModer, IsOwner
 
 
@@ -22,6 +24,11 @@ class CourseViewSet(ModelViewSet):
         course = serializer.save()
         course.owner = self.request.user
         course.save()
+
+    def perform_update(self, serializer):
+        instance = serializer.save()
+        send_update_notification.delay(instance.pk)
+        return instance
 
     def get_permissions(self):
         if self.action == "create":
