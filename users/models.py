@@ -23,6 +23,7 @@ class User(AbstractUser):
     city = models.CharField(max_length=30, verbose_name="Город", blank=True, null=True, help_text="Введите ваш город")
 
     token = models.CharField(max_length=100, verbose_name="Токен", blank=True, null=True)
+    last_login = models.DateField(auto_now=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
