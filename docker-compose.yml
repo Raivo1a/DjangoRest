@@ -1,0 +1,78 @@
+services:
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+      - static_volume:/code/static
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    env_file:
+      - .env
+
+  db:
+    image: postgres:16.0
+    environment:
+      POSTGRES_PASSWORD: kris1616
+      POSTGRES_DB: django_rest
+    env_file:
+      - ./.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  redis:
+    image: redis:7.0
+    ports:
+      - "6379:6379"
+    env_file:
+      - ./.env
+    volumes:
+      - redis_data:/data
+
+  celery:
+    build: .
+    command:
+      celery -A config worker --loglevel=info
+    volumes:
+      - .:/code
+    depends_on:
+      - redis
+      - web
+    env_file:
+      - ./.env
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+
+  celery_beat:
+    build: .
+    command:
+      celery -A config beat --loglevel=info
+    volumes:
+      - .:/code
+    depends_on:
+      - redis
+      - web
+    env_file:
+      - .env
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+
+networks:
+  default:
+
+volumes:
+  postgres_data:
+  static_volume:
+  redis_data:
