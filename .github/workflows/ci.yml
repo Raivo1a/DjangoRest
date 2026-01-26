@@ -36,7 +36,7 @@ jobs:
           POSTGRES_DB: test_db
           POSTGRES_USER: test_user
           POSTGRES_PASSWORD: test_password
-        options: --health-cort=5432
+        options: --health-cmd=5432
 
     steps:
       - name: Check out code
