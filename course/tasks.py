@@ -5,7 +5,6 @@ from course.models import Course
 from users.models import User, Subscription
 
 
-
 @shared_task
 def send_update_notification(course_pk):
     """Подписка на обновления курсов"""
